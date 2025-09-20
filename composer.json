@@ -1,0 +1,21 @@
+{
+    "name": "sedalit/simple-mvc-framework",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "PHPFramework\\": "core/",
+            "App\\": "app/"
+        }
+    },
+    "require": {
+        "symfony/var-dumper": "^5.4",
+        "ext-pdo": "*",
+        "phpmailer/phpmailer": "^6.10"
+    },
+    "authors": [
+        {
+            "name": "Vladislav Agarkov",
+            "email": "vlad.agarkov@alto-ai.ru"
+        }
+    ]
+}
