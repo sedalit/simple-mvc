@@ -39,8 +39,36 @@ class Request {
         return "";
     }
 
-    public function get(string $name, mixed $default = null) : ?string
+    public function get(string $name, mixed $default = null) : mixed
     {
         return $_GET[$name] ?? $default;
+    }
+
+    public function post(string $name, mixed $default = null) : mixed
+    {
+        return $_POST[$name] ?? $default;
+    }
+
+    public function isGet() : bool
+    {
+        return $this->getMethod() == 'GET';
+    }
+
+    public function isPost() : bool
+    {
+        return $this->getMethod() == 'POST';
+    }
+
+    public function getData() : array
+    {
+        $data = [];
+
+        $requestData = $this->isGet() ? $_GET : $_POST;
+
+        foreach ($requestData as $key => $value) {
+            $data[$key] = trim($value);
+        }
+
+        return $data;
     }
 }
