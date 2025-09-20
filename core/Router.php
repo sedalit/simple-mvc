@@ -32,33 +32,35 @@ class Router {
         if (!$callback) {
             $this->response->setCode(404);
             return null;
+        } else if (is_array($callback)) {
+            $callback[0] = new $callback[0];
         }
         
         return call_user_func($callback);
     }
 
-    public function get(string $path, object $callback) : void
+    public function get(string $path, object|array $callback) : void
     {
         $this->addRoute(self::GET, $path, $callback);
     }
 
-    public function post(string $path, object $callback) : void
+    public function post(string $path, object|array $callback) : void
     {
         $this->addRoute(self::POST, $path, $callback);
     }
 
-    public function put(string $path, object $callback) : void
+    public function put(string $path, object|array $callback) : void
     {
         $this->addRoute(self::PUT, $path, $callback);
 
     }
 
-    public function delete(string $path, object $callback) : void
+    public function delete(string $path, object|array $callback) : void
     {
         $this->addRoute(self::DELETE, $path, $callback);
     }
 
-    protected function addRoute(string $method, string $path, object $callback) : void
+    protected function addRoute(string $method, string $path, object|array $callback) : void
     {
         $path = trim($path, '/');
         $this->routes[$method]["/{$path}"] = $callback;
