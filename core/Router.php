@@ -31,7 +31,7 @@ class Router {
 
         if (!$callback) {
             $this->response->setCode(404);
-            return null;
+            return view('errors', ['code' => 404, 'message' => 'Not found']);
         } else if (is_array($callback)) {
             $callback[0] = new $callback[0];
         }

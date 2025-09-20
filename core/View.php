@@ -20,7 +20,8 @@ class View {
             require_once $viewFile;
             return ob_get_clean();
         } else {
-            throw new \Exception("View file not found: {$viewFile}");
+            response()->setCode(500);
+            return view('error', ['code' => 500, 'message' => 'Internal server error']);
         }
 
     }
