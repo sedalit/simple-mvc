@@ -13,7 +13,7 @@ class View {
 
     public function render(string $viewName, array $data = [], string $layout = '')
     {
-        $viewFile = VIEWS . "{$viewName}.php";
+        $viewFile = VIEWS . "/{$viewName}.php";
         if (is_file($viewFile)) {
             extract($data);
             require_once $viewFile;
