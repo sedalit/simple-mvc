@@ -21,6 +21,11 @@ class Application {
         return $this->router;
     }
 
+    public function request() : Request
+    {
+        return $this->request;
+    }
+
     public function run() : void
     {
         echo $this->router->dispatch();
