@@ -13,7 +13,7 @@ class Request {
 
     public function getPath() : string
     {
-        return $this->uri;
+        return $this->removeQueryString();
     }
 
     public function getMethod() : string
@@ -25,5 +25,22 @@ class Request {
         }
 
         return strtoupper($method);
+    }
+
+    public function removeQueryString() : string
+    {
+        if ($this->uri) {
+            $params = explode('&', $this->uri);
+            if (!str_contains($params[0], '=')) {
+                return trim($params[0], '/');
+            }
+        }
+
+        return "";
+    }
+
+    public function get(string $name, mixed $default = null) : ?string
+    {
+        return $_GET[$name] ?? $default;
     }
 }
