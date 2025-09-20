@@ -7,3 +7,6 @@ const APP = ROOT . '/app';
 const CORE = ROOT . '/core';
 const HELPERS = ROOT . '/helpers';
 const CONFIG = ROOT . '/config';
+const VIEWS = APP . '/views';
+
+const LAYOUT = 'default';
