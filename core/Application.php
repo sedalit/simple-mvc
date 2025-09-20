@@ -3,6 +3,8 @@
 namespace PHPFramework;
 
 class Application {
+    public static Application $instance;
+
     protected string $uri;
     protected Request $request;
     protected Response $response;
@@ -11,6 +13,8 @@ class Application {
 
     public function __construct()
     {
+        if (!self::$instance) self::$instance = $this;
+
         $this->uri = $_SERVER['REQUEST_URI'];
         $this->request = new Request($this->uri);
         $this->response = new Response();
@@ -18,19 +22,19 @@ class Application {
         $this->view = new View(LAYOUT);
     }
 
-    public function router() : Router
+    public static function router() : Router
     {
-        return $this->router;
+        return self::$instance->router;
     }
 
-    public function request() : Request
+    public static function request() : Request
     {
-        return $this->request;
+        return self::$instance->request;
     }
 
-    public function view() : View
+    public static function view() : View
     {
-        return $this->view;
+        return self::$instance->view;
     }
 
     public function run() : void
