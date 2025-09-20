@@ -11,18 +11,31 @@ class View {
         $this->layout = $layout;
     }
 
-    public function render(string $viewName, array $data = [], string $layout = '') : bool|string
+    public function render(string $viewName, array $data = [], mixed $layout = '') : bool|string
     {
         $viewFile = VIEWS . "/{$viewName}.php";
-        if (is_file($viewFile)) {
+        $this->content = $this->renderFile($viewFile, $data);
+
+        if ($layout === false) {
+            return $this->content;
+        }
+
+        $layoutFileName = $layout ?: $this->layout;
+        $layoutFile = VIEWS . "/layouts/{$layoutFileName}.php";
+
+        return $this->renderFile($layoutFile, $data);
+    }
+
+    private function renderFile(string $fileName, array $data = []) : bool|string|View
+    {
+        if (is_file($fileName)) {
             extract($data);
             ob_start();
-            require_once $viewFile;
+            require_once $fileName;
             return ob_get_clean();
         } else {
             response()->setCode(500);
-            return view('error', ['code' => 500, 'message' => 'Internal server error']);
+            return view('error', ['code' => 500, 'message' => 'Internal server error'], false);
         }
-
     }
 }
