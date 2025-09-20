@@ -13,7 +13,7 @@ class Application {
 
     public function __construct()
     {
-        if (!self::$instance) self::$instance = $this;
+        self::$instance = $this;
 
         $this->uri = $_SERVER['REQUEST_URI'];
         $this->request = new Request($this->uri);
