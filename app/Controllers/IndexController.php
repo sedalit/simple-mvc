@@ -2,10 +2,12 @@
 
 namespace App\Controllers;
 
+use PHPFramework\Application;
+
 class IndexController {
 
-    public function index() : string
+    public function index() : mixed
     {
-        return "contact";
+        return Application::view()->render('index');
     }
 }
