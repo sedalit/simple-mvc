@@ -12,3 +12,5 @@ use PHPFramework\Application;
 $app = new Application();
 
 require_once CONFIG . '/routes.php';
+
+$app->run();
