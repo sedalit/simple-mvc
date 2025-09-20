@@ -23,6 +23,20 @@ class Router {
         return $this->routes;
     }
 
+    public function dispatch() : mixed
+    {
+        $path = $this->request->getPath();
+        $method = $this->request->getMethod();
+        $callback = $this->routes[$method]["/{$path}"] ?? null;
+
+        if (!$callback) {
+            $this->response->setCode(404);
+            return null;
+        }
+        
+        return call_user_func($callback);
+    }
+
     public function get(string $path, object $callback) : void
     {
         $this->addRoute(self::GET, $path, $callback);
@@ -46,6 +60,7 @@ class Router {
 
     protected function addRoute(string $method, string $path, object $callback) : void
     {
-        $this->routes[$method][$path] = $callback;
+        $path = trim($path, '/');
+        $this->routes[$method]["/{$path}"] = $callback;
     }
 }
