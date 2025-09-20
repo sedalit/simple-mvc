@@ -5,7 +5,10 @@
         "psr-4": {
             "PHPFramework\\": "core/",
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "helpers/functions.php"
+        ]
     },
     "require": {
         "symfony/var-dumper": "^5.4",
