@@ -2,12 +2,12 @@
 
 namespace App\Controllers;
 
-use PHPFramework\Application;
+use PHPFramework\Controller;
 
-class IndexController {
+class IndexController extends Controller {
 
     public function index() : mixed
     {
-        return Application::view()->render('index');
+        return $this->render('index');
     }
 }
