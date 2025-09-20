@@ -28,3 +28,10 @@ if (!function_exists('response')) {
         return app()->response();
     }
 }
+
+if (!function_exists('baseUrl')) {
+    function baseUrl($path = '') : string
+    {
+        return PATH . $path;
+    }
+}
