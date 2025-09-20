@@ -1,6 +1,7 @@
 <?php
 
 use PHPFramework\Application;
+use PHPFramework\Response;
 use PHPFramework\View;
 
 if (!function_exists('app')) {
@@ -18,5 +19,12 @@ if (!function_exists('view')) {
         } 
 
         return app()->view();
+    }
+}
+
+if (!function_exists('response')) {
+    function response() : Response
+    {
+        return app()->response();
     }
 }

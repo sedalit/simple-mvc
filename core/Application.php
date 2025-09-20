@@ -37,6 +37,11 @@ class Application {
         return self::$instance->view;
     }
 
+    public static function response() : Response
+    {
+        return self::$instance->response;
+    }
+
     public function run() : void
     {
         echo $this->router->dispatch();
