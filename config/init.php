@@ -11,5 +11,7 @@ const CORE = ROOT . '/core';
 const HELPERS = ROOT . '/helpers';
 const CONFIG = ROOT . '/config';
 const VIEWS = APP . '/views';
+const VALIDATION_RULES = APP . '/Validation/Rules';
 
 const LAYOUT = 'default';
+const ENCODING = 'UTF-8';

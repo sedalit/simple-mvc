@@ -2,6 +2,8 @@
 
 namespace PHPFramework;
 
+use PHPFramework\Validation\Validator;
+
 class Application {
     public static Application $instance;
 
@@ -10,6 +12,7 @@ class Application {
     protected Response $response;
     protected Router $router;
     protected View $view;
+    protected Validator $validator;
 
     public function __construct()
     {
@@ -20,6 +23,7 @@ class Application {
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
         $this->view = new View(LAYOUT);
+        $this->validator = new Validator();
     }
 
     public static function router() : Router
@@ -40,6 +44,11 @@ class Application {
     public static function response() : Response
     {
         return self::$instance->response;
+    }
+
+    public static function validator() : Validator
+    {
+        return self::$instance->validator;
     }
 
     public function run() : void
