@@ -1,6 +1,7 @@
 <?php
 
 use PHPFramework\Application;
+use PHPFramework\Database;
 use PHPFramework\Request;
 use PHPFramework\Response;
 use PHPFramework\Validation\Validator;
@@ -101,7 +102,16 @@ if (!function_exists('abort')) {
     function abort(string $error = '', int $code = 404) : View
     {
         response()->setCode($code);
-        echo view('error', ['code' => $code, 'message' => $error], false);
+        if (DEBUG || $code === 404) {
+            echo view('error', ['code' => $code, 'message' => $error], false);
+        }
         die;
+    }
+}
+
+if (!function_exists('db')) {
+    function db() : Database
+    {
+        return app()->database();
     }
 }

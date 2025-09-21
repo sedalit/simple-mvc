@@ -13,6 +13,7 @@ class Application {
     protected Router $router;
     protected View $view;
     protected Validator $validator;
+    protected Database $database;
 
     public function __construct()
     {
@@ -24,6 +25,7 @@ class Application {
         $this->router = new Router($this->request, $this->response);
         $this->view = new View(LAYOUT);
         $this->validator = new Validator();
+        $this->database = new Database();
     }
 
     public static function router() : Router
@@ -49,6 +51,11 @@ class Application {
     public static function validator() : Validator
     {
         return self::$instance->validator;
+    }
+
+    public static function database() : Database
+    {
+        return self::$instance->database;
     }
 
     public function run() : void
