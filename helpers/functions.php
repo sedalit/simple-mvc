@@ -31,6 +31,13 @@ if (!function_exists('response')) {
     }
 }
 
+if (!function_exists('redirect')) {
+    function redirect(string $url = '')
+    {
+        return response()->redirect($url);
+    }
+}
+
 if (!function_exists('request')) {
     function request() : Request
     {
@@ -56,5 +63,36 @@ if (!function_exists('baseUrl')) {
     function baseUrl($path = '') : string
     {
         return PATH . $path;
+    }
+}
+
+if (!function_exists('h')) {
+    function h(string $string) : string
+    {
+        return htmlspecialchars($string, ENT_QUOTES | ENT_HTML5);
+    }
+}
+
+if (!function_exists('old')) {
+    function old(string $fieldName) : string
+    {
+        return isset($_POST[$fieldName]) ? h($_POST[$fieldName]) : '';
+    }
+}
+
+if (!function_exists('formErrors')) {
+    function formErrors(string $fieldName, array $errors = []) : string
+    {
+        $output = '';
+        
+        if (isset($errors[$fieldName])) {
+            $output .= '<div class="invalid-feedback d-block"><ul class="list-unstyled">';
+            foreach ($errors[$fieldName] as $error) {
+                $output .= "<li>{$error}</li>";
+            }
+            $output .= '</ul></div>';
+        }
+
+        return $output;
     }
 }
