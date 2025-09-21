@@ -84,7 +84,7 @@ if (!function_exists('formErrors')) {
     function formErrors(string $fieldName, array $errors = []) : string
     {
         $output = '';
-        
+
         if (isset($errors[$fieldName])) {
             $output .= '<div class="invalid-feedback d-block"><ul class="list-unstyled">';
             foreach ($errors[$fieldName] as $error) {
@@ -94,5 +94,14 @@ if (!function_exists('formErrors')) {
         }
 
         return $output;
+    }
+}
+
+if (!function_exists('abort')) {
+    function abort(string $error = '', int $code = 404) : View
+    {
+        response()->setCode($code);
+        echo view('error', ['code' => $code, 'message' => $error], false);
+        die;
     }
 }

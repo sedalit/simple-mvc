@@ -34,8 +34,7 @@ class View {
             require_once $fileName;
             return ob_get_clean();
         } else {
-            response()->setCode(500);
-            return view('error', ['code' => 500, 'message' => 'Internal server error'], false);
+            return abort('Internal server error', 500);
         }
     }
 }
