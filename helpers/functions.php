@@ -6,6 +6,7 @@ use PHPFramework\Request;
 use PHPFramework\Response;
 use PHPFramework\Validation\Validator;
 use PHPFramework\View;
+use PHPFramework\Session;
 
 if (!function_exists('app')) {
     function app() : Application
@@ -113,5 +114,25 @@ if (!function_exists('db')) {
     function db() : Database
     {
         return app()->database();
+    }
+}
+
+if (!function_exists('session')) {
+    function session() : Session
+    {
+        return app()->session();
+    }
+}
+
+if (!function_exists('getAlerts')) {
+    function getAlerts()
+    {
+        if ($flashSuccess = session()->getFlash('success')) {
+            view()->renderPartial('includes/alert', compact('flashSuccess'));
+        }
+
+        if ($flashError = session()->getFlash('error')) {
+            view()->renderPartial('includes/alert', compact('flashError'));
+        }
     }
 }

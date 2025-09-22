@@ -26,6 +26,18 @@ class View {
         return $this->renderFile($layoutFile, $data);
     }
 
+    public function renderPartial(string $viewName, array $data = []) : string
+    {
+        $viewFile = VIEWS . "/{$viewName}.php";
+        if (is_file($viewFile)) {
+            extract($data);
+            require $viewFile;
+            return "";
+        } else {
+            return "File {$viewFile} not found";
+        }
+    }
+
     private function renderFile(string $fileName, array $data = []) : bool|string|View
     {
         if (is_file($fileName)) {
