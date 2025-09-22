@@ -56,6 +56,11 @@ class Database {
         return $result;
     }
 
+    public function getInsertedId() : bool|string
+    {
+        return $this->connection->lastInsertId();
+    }
+
     protected function tryExecute(string $query, string $tableName, array $parameters = []) : ?PDOStatement
     {
         $tablesWhiteList = TABLES_WHITELIST ?? [];
