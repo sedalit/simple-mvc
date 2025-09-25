@@ -39,14 +39,22 @@ class Request {
         return "";
     }
 
-    public function get(string $name, mixed $default = null) : mixed
+    public function get(string $name = '', mixed $default = null) : mixed
     {
-        return $_GET[$name] ?? $default;
+        if ($name) {
+            return $_GET[$name] ?? $default;
+        }
+        
+        return $_GET;
     }
 
-    public function post(string $name, mixed $default = null) : mixed
+    public function post(string $name = '', mixed $default = null) : mixed
     {
-        return $_POST[$name] ?? $default;
+        if ($name) {
+            return $_POST[$name] ?? $default;
+        }
+        
+        return $_POST;
     }
 
     public function isGet() : bool
