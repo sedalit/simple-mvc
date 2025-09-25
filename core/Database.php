@@ -61,6 +61,11 @@ class Database {
         return $this->connection->lastInsertId();
     }
 
+    public function rowCount() : int
+    {
+        return $this->statement->rowCount();
+    }
+
     protected function tryExecute(string $query, string $tableName, array $parameters = []) : ?PDOStatement
     {
         $tablesWhiteList = TABLES_WHITELIST ?? [];
