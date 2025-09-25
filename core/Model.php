@@ -8,6 +8,8 @@ abstract class Model {
 
     protected abstract function tableName() : string;
 
+    protected abstract function primaryKeyName() : string;
+
     public function loadData() : void
     {
         $data = request()->getData();
@@ -25,7 +27,12 @@ abstract class Model {
         return $this->attributes;
     }
 
-    public function save()
+    public function setAttribute(string $key, mixed $value) : void
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    public function save() : bool|string
     {
         $fieldsKeys = array_keys($this->attributes);
         $fields = array_map(function($field) {
@@ -41,5 +48,28 @@ abstract class Model {
         db()->query($query, $this->attributes);
 
         return db()->getInsertedId();
+    }
+
+    public function update() : int|bool
+    {
+        if (!isset($this->attributes[$this->primaryKeyName()])) {
+            return false;
+        }
+
+        $primaryKeyValue = $this->attributes[$this->primaryKeyName()];
+        $fields = '';
+
+        foreach ($this->attributes as $key => $value) {
+            if ($key === $this->primaryKeyName()) {
+                continue;
+            }
+
+            $fields .= " `{$key}`=:{$key},";
+        }
+
+        $fields = rtrim($fields, ',');
+        $query = "UPDATE {$this->tableName()} SET {$fields} WHERE `{$this->primaryKeyName()}`=:{$this->primaryKeyName()}";
+        db()->query($query, $this->attributes);
+        return db()->rowCount();
     }
 }
