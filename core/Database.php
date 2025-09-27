@@ -7,6 +7,7 @@ use PDOStatement;
 class Database {
     protected \PDO $connection;
     protected \PDOStatement $statement;
+    protected array $queries = [];
 
     public function __construct()
     {
@@ -23,6 +24,12 @@ class Database {
         try {
             $this->statement = $this->connection->prepare($query);
             $this->statement->execute($params);
+
+            if (DEBUG) {
+                ob_start();
+                $this->statement->debugDumpParams();
+                $this->queries[] = ob_get_clean();
+            }
         } catch (\PDOException $e) {
             abort($e->getMessage(), 500);
         }
@@ -30,9 +37,19 @@ class Database {
         return $this;
     }
 
-    public function get() : array
+    public function getOne() : array
+    {
+        return $this->statement->fetch();
+    }
+
+    public function getAll() : array
     {
         return $this->statement->fetchAll();
+    }
+
+    public function getColumn() : mixed
+    {
+        return $this->statement->fetchColumn();
     }
 
     public function findAll(string $table) : array
@@ -48,7 +65,7 @@ class Database {
     public function findOrFail(string $table, int $id) : mixed
     {
         $result = $this->findOne($table, $id);
-
+        
         if (!$result) {
             abort();
         }
@@ -64,6 +81,22 @@ class Database {
     public function rowCount() : int
     {
         return $this->statement->rowCount();
+    }
+
+    public function getQueries() : array
+    {
+        $result = [];
+        foreach ($this->queries as $key => $value) {
+            $line = strtok($value, PHP_EOL);
+
+            while ($line !== false) {
+                if (str_contains($line, 'SQL:') || str_contains($line, 'Sent SQL:')) {
+                    $result[$key][] = $line;
+                }
+                $line = strtok(PHP_EOL);
+            }
+        }
+        return $result;
     }
 
     protected function tryExecute(string $query, string $tableName, array $parameters = []) : ?PDOStatement
