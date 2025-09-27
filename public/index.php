@@ -1,5 +1,7 @@
 <?php
 
+$startFrameworkTime = microtime(true);
+
 if (PHP_MAJOR_VERSION < 8) {
     die("Require PHP version >= 8");
 }
@@ -14,3 +16,7 @@ $app = new Application();
 require_once CONFIG . '/routes.php';
 
 $app->run();
+
+if (DEBUG) {
+    dump("Time: " . microtime(true) - $startFrameworkTime);
+}
