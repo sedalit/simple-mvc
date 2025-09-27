@@ -27,9 +27,16 @@ class ExtensionRule extends ValidationRule
 
     public function passes(): bool
     {
-        $extension = File::getExtension('logo.my.JPEG');
+        if (!$this->value['name'] && !$this->value['full_path']) {
+            return true;
+        }
+        
+        $name = File::getFileName($this->value);
+        $extension = File::getExtension($name);
         $extension = strtolower($extension);
 
         return in_array($extension, $this->allowed);
     }
+
+
 }
