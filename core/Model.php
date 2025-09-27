@@ -72,4 +72,10 @@ abstract class Model {
         db()->query($query, $this->attributes);
         return db()->rowCount();
     }
+
+    public function delete(mixed $id) : int
+    {
+        db()->query("DELETE FROM {$this->tableName()} WHERE `{$this->primaryKeyName()}` = ?", [$id]);
+        return db()->rowCount();
+    }
 }
