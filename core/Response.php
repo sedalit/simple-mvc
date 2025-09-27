@@ -8,7 +8,7 @@ class Response {
         http_response_code($code);
     }
 
-    public function redirect(string $url = '') : never
+    public function redirect(string $url = '', array $params = []) : never
     {
         $redirect = $url;
 
@@ -16,6 +16,7 @@ class Response {
             $redirect = $_SERVER['HTTP_REFERER'] ?? baseUrl();
         }
 
+        extract($params);
         header("Location: {$redirect}");
         die;
     }
