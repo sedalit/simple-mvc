@@ -2,7 +2,7 @@
 
 namespace PHPFramework;
 
-abstract class Model {
+abstract class Model implements \ArrayAccess {
     protected array $fillable = [];
     protected array $attributes = [];
 
@@ -10,15 +10,17 @@ abstract class Model {
 
     protected abstract function primaryKeyName() : string;
 
+    public function __construct()
+    {
+        $this->loadData();
+    }
+
     public function loadData() : void
     {
         $data = request()->getData();
         foreach ($this->fillable as $value) {
-            if (isset($data[$value])) {
-                $this->attributes[$value] = $data[$value];
-            } else {
-                $this->attributes[$value] = '';
-            }
+            $fieldValue = isset($data[$value]) ? $data[$value] : '';
+            $this->attributes[$value] = $fieldValue;
         }
     }
 
@@ -47,7 +49,10 @@ abstract class Model {
         $query = "INSERT INTO {$this->tableName()} ($fields) VALUES ($valuesPlaceholders)";
         db()->query($query, $this->attributes);
 
-        return db()->getInsertedId();
+        $id = db()->getInsertedId();
+        $this->setAttribute($this->primaryKeyName(), $id);
+        
+        return $id;
     }
 
     public function update() : int|bool
@@ -77,5 +82,37 @@ abstract class Model {
     {
         db()->query("DELETE FROM {$this->tableName()} WHERE `{$this->primaryKeyName()}` = ?", [$id]);
         return db()->rowCount();
+    }
+
+    public function offsetSet(mixed $offset, mixed $value) : void 
+    {
+        $this->attributes[$offset] = $value;
+    }
+
+    public function offsetExists(mixed $offset) : bool 
+    {
+        return isset($this->attributes[$offset]);
+    }
+
+    public function offsetUnset(mixed $offset) : void 
+    {
+        unset($this->attributes[$offset]);
+    }
+
+    public function offsetGet($offset) : mixed 
+    {
+        return isset($this->attributes[$offset]) ? $this->attributes[$offset] : null;
+    }
+
+    public function __get(string $name) : mixed
+    {
+        return $this->attributes[$name] ?? null;
+    }
+
+    public function __set(string $name, $value) : void 
+    {
+        if (in_array($name, $this->fillable, true)) {
+            $this->attributes[$name] = $value;
+        }
     }
 }
