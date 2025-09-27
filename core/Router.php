@@ -11,6 +11,7 @@ class Router {
     protected Request $request;
     protected Response $response;
     protected array $routes = [];
+    protected array $routeParams = [];
 
     public function __construct(Request $request, Response $response)
     {
@@ -27,7 +28,7 @@ class Router {
     {
         $path = $this->request->getPath();
         $method = $this->request->getMethod();
-        $callback = $this->routes[$method]["/{$path}"] ?? null;
+        $callback = $this->matchRoute($method, $path);
 
         if (!$callback) {
             abort('Page not found');
@@ -59,9 +60,34 @@ class Router {
         $this->addRoute(self::DELETE, $path, $callback);
     }
 
+    public function routeParams() : array
+    {
+        return $this->routeParams;
+    }
+
+    public function routeParam(string $key) : mixed
+    {
+        return $this->routeParams[$key] ?? null;
+    }
+
     protected function addRoute(string $method, string $path, object|array $callback) : void
     {
         $path = trim($path, '/');
         $this->routes[$method]["/{$path}"] = $callback;
+    }
+
+    protected function matchRoute(string $method, string $path) : mixed
+    {
+        foreach ($this->routes[$method] as $pattern => $route) {
+            if (preg_match("#^{$pattern}$#", "/{$path}", $matches)) {
+                foreach ($matches as $k => $v) {
+                    if (is_string($k)) {
+                        $this->routeParams[$k] = $v;
+                    }
+                }
+                return $route;
+            }
+        }
+        return false;
     }
 }
