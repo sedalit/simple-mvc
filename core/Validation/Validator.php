@@ -7,6 +7,7 @@ use PHPFramework\Validation\Rules\MaxRule;
 use PHPFramework\Validation\ValidationRuleInterface;
 use PHPFramework\Validation\Rules\RequiredRule;
 use PHPFramework\Validation\Rules\MinRule;
+use PHPFramework\Validation\Rules\UniqueRule;
 
 class Validator {
     protected array $errors = [];
@@ -15,6 +16,7 @@ class Validator {
         'min' => MinRule::class,
         'max' => MaxRule::class,
         'email' => EmailRule::class,
+        'unique' => UniqueRule::class,
     ];
 
     public function __construct(string $customRulesPath = VALIDATION_RULES)
