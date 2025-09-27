@@ -3,7 +3,7 @@
 namespace PHPFramework\Utils;
 
 class Text {
-    public static function slugify(string $text) : string
+    public static function slugify(string $text, ?int $id = null) : string
     {
         $text = mb_strtolower($text, 'UTF-8');
 
@@ -25,6 +25,10 @@ class Text {
         $text = preg_replace('/[^a-z0-9- ]+/', '', $text);
         $text = preg_replace('/[^a-z0-9-]+/', '-', $text);
         $text = trim($text, '-');
+
+        if ($text && $id !== null) {
+            $text .= "-{$id}";
+        }
 
         return $text ?: '';
     }
