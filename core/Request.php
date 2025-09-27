@@ -30,9 +30,14 @@ class Request {
     public function removeQueryString() : string
     {
         if ($this->uri) {
-            $params = explode('&', $this->uri);
-            if (!str_contains($params[0], '=')) {
-                return trim($params[0], '/');
+            $separators = ['&', '?'];
+
+            foreach ($separators as $separator) {
+                $params = explode($separator, $this->uri);
+                
+                if (!str_contains($params[0], '=')) {
+                    return trim($params[0], '/');
+                }
             }
         }
 
