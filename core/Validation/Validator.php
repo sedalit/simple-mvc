@@ -3,6 +3,7 @@
 namespace PHPFramework\Validation;
 
 use PHPFramework\Validation\Rules\EmailRule;
+use PHPFramework\Validation\Rules\ExtensionRule;
 use PHPFramework\Validation\Rules\MaxRule;
 use PHPFramework\Validation\ValidationRuleInterface;
 use PHPFramework\Validation\Rules\RequiredRule;
@@ -17,6 +18,7 @@ class Validator {
         'max' => MaxRule::class,
         'email' => EmailRule::class,
         'unique' => UniqueRule::class,
+        'extension' => ExtensionRule::class,
     ];
 
     public function __construct(string $customRulesPath = VALIDATION_RULES)
