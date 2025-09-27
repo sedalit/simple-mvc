@@ -14,6 +14,10 @@ class RequiredRule extends ValidationRule {
 
     public function passes() : bool
     {
+        if (is_array($this->value)) {
+            return count(array_filter($this->value, 'strlen')) > 0;
+        }
+        
         return !empty(trim((string)$this->value));
     }
 }
