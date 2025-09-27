@@ -4,6 +4,7 @@ use PHPFramework\Application;
 use PHPFramework\Database;
 use PHPFramework\Request;
 use PHPFramework\Response;
+use PHPFramework\Router;
 use PHPFramework\Validation\Validator;
 use PHPFramework\View;
 use PHPFramework\Session;
@@ -34,9 +35,9 @@ if (!function_exists('response')) {
 }
 
 if (!function_exists('redirect')) {
-    function redirect(string $url = '')
+    function redirect(string $url = '', array $params = [])
     {
-        return response()->redirect($url);
+        return response()->redirect($url, $params);
     }
 }
 
@@ -127,12 +128,17 @@ if (!function_exists('session')) {
 if (!function_exists('getAlerts')) {
     function getAlerts()
     {
-        if ($flashSuccess = session()->getFlash('success')) {
-            view()->renderPartial('includes/alert', compact('flashSuccess'));
-        }
+        if (!empty($_SESSION['flash'])) {
+            foreach ($_SESSION['flash'] as $key => $value) {
+                view()->renderPartial('includes/alert', [$key => session()->getFlash($key)]);
+            }
+        }   
+    }
+}
 
-        if ($flashError = session()->getFlash('error')) {
-            view()->renderPartial('includes/alert', compact('flashError'));
-        }
+if (!function_exists('router')) {
+    function router() : Router
+    {
+        return app()->router();
     }
 }
