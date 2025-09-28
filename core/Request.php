@@ -89,4 +89,9 @@ class Request {
     {
         return $_FILES[$name] ?? $default;
     }
+
+    public function requestUrl() : string
+    {
+        return $_SERVER['REQUEST_URI'];
+    }
 }
