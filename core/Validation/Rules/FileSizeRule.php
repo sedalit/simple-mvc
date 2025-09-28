@@ -45,7 +45,23 @@ class FileSizeRule extends ValidationRule {
     }
 
     public function passes() : bool
-    {        
+    {   
+        // Обработка массива файлов
+        if (is_array($this->value['size'])) {
+            if (empty($this->value['size'][0])) {
+                return true;
+            }
+
+            for ($i = 0; $i < count($this->value['size']); $i++) {
+                if ($this->value['size'][$i] > $this->maxSizeInBytes) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Обработка одного файла
         return $this->value['size'] <= $this->maxSizeInBytes;
     }
 
@@ -61,7 +77,7 @@ class FileSizeRule extends ValidationRule {
         $rawUnit = preg_replace('/[^a-z]/i', '', strtolower($this->params[0] ?? ''));
         $rawUnit = trim($rawUnit);
         $rawUnit = rtrim($rawUnit, 's');
-        
+
         foreach (self::SIZE_UNITS as $key => $value) {
             if (in_array($rawUnit, $value) || $rawUnit === $key) {
                 return $key;

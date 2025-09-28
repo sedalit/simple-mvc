@@ -4,6 +4,7 @@ namespace PHPFramework\Validation;
 
 use PHPFramework\Validation\Rules\EmailRule;
 use PHPFramework\Validation\Rules\ExtensionRule;
+use PHPFramework\Validation\Rules\FileRule;
 use PHPFramework\Validation\Rules\FileSizeRule;
 use PHPFramework\Validation\Rules\MaxRule;
 use PHPFramework\Validation\ValidationRuleInterface;
@@ -21,6 +22,7 @@ class Validator {
         'unique' => UniqueRule::class,
         'extension' => ExtensionRule::class,
         'fileSize' => FileSizeRule::class,
+        'file' => FileRule::class,
     ];
 
     public function __construct(string $customRulesPath = VALIDATION_RULES)
@@ -44,7 +46,7 @@ class Validator {
                 }
 
                 $class = $this->rules[$name];
-                
+
                 /** @var ValidationRuleInterface $rule */
                 $rule = new $class($field, $data[$field] ?? '', $param ? [$param] : []);
                 if (!$rule->passes()) {

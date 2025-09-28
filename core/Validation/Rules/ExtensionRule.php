@@ -30,13 +30,33 @@ class ExtensionRule extends ValidationRule
         if (!$this->value['name'] && !$this->value['full_path']) {
             return true;
         }
-        
-        $name = File::getFileName($this->value);
-        $extension = File::getExtension($name);
+
+        // Обработка массива файлов
+        if (is_array($this->value['name'])) {
+            if (empty($this->value['name'][0])) {
+                return true;
+            }
+
+            for ($i = 0; $i < count($this->value['name']); $i++) {
+                if (!$this->isAllowedExtension($this->value['name'][$i])) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Обработка одного файла
+        $name = $this->value['name'];
+
+        return $this->isAllowedExtension($name);
+    }
+
+    private function isAllowedExtension($fileName) : bool
+    {
+        $extension = File::getExtension($fileName);
         $extension = strtolower($extension);
 
         return in_array($extension, $this->allowed);
     }
-
-
 }
