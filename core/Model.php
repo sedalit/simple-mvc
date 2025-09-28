@@ -18,6 +18,7 @@ abstract class Model implements \ArrayAccess {
     public function loadData() : void
     {
         $data = request()->getData();
+        
         foreach ($this->fillable as $value) {
             $fieldValue = isset($data[$value]) ? $data[$value] : '';
             $this->attributes[$value] = $fieldValue;
@@ -113,6 +114,13 @@ abstract class Model implements \ArrayAccess {
     {
         if (in_array($name, $this->fillable, true)) {
             $this->attributes[$name] = $value;
+        }
+    }
+
+    public function __unset(string $name) : void
+    {
+        if (isset($this->attributes[$name])) {
+            unset($this->attributes[$name]);
         }
     }
 }
