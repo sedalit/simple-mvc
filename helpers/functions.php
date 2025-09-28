@@ -56,7 +56,7 @@ if (!function_exists('validator')) {
 }
 
 if (!function_exists('validate')) {
-    function validate(array $data, array $rules) : bool
+    function validate(array|\ArrayAccess $data, array $rules) : bool
     {
         return app()->validator()->validate($data, $rules);
     }

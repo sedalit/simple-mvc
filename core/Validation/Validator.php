@@ -30,10 +30,9 @@ class Validator {
         $this->loadCustomRules($customRulesPath);
     }
 
-    public function validate(array $data, array $rules) : bool
+    public function validate(array|\ArrayAccess $data, array $rules) : bool
     {
         $this->errors = [];
-
         
         foreach ($rules as $field => $ruleString) {
             $ruleItems = explode('|', $ruleString);
