@@ -28,36 +28,51 @@ class Router {
     {
         $path = $this->request->getPath();
         $method = $this->request->getMethod();
-        $callback = $this->matchRoute($method, $path);
+        $route = $this->matchRoute($method, $path);
 
-        if (!$callback) {
+        if (!$route) {
             abort('Page not found');
-        } else if (is_array($callback)) {
-            $callback[0] = new $callback[0];
-        }
+        } 
         
-        return call_user_func($callback);
+        $callback = $route['callback'];
+        $middlewares = $route['middlewares'];
+
+        $next = function() use ($callback) {
+            if (is_array($callback)) {
+                $callback[0] = new $callback[0];
+            }
+
+            return call_user_func($callback, $this->request, $this->response);
+        };
+
+        foreach (array_reverse($middlewares) as $middleware) {
+            $next = function() use ($middleware, $next) {
+                return (new $middleware)->handle($this->request, $this->response, $next);
+            };
+        }
+
+        return $next();
     }
 
-    public function get(string $path, object|array $callback) : void
+    public function get(string $path, object|array $callback, array $middlewares = []) : void
     {
-        $this->addRoute(self::GET, $path, $callback);
+        $this->addRoute(self::GET, $path, $callback, $middlewares);
     }
 
-    public function post(string $path, object|array $callback) : void
+    public function post(string $path, object|array $callback, array $middlewares = []) : void
     {
-        $this->addRoute(self::POST, $path, $callback);
+        $this->addRoute(self::POST, $path, $callback, $middlewares);
     }
 
-    public function put(string $path, object|array $callback) : void
+    public function put(string $path, object|array $callback, array $middlewares = []) : void
     {
-        $this->addRoute(self::PUT, $path, $callback);
+        $this->addRoute(self::PUT, $path, $callback, $middlewares);
 
     }
 
-    public function delete(string $path, object|array $callback) : void
+    public function delete(string $path, object|array $callback, array $middlewares = []) : void
     {
-        $this->addRoute(self::DELETE, $path, $callback);
+        $this->addRoute(self::DELETE, $path, $callback, $middlewares);
     }
 
     public function routeParams() : array
@@ -70,10 +85,13 @@ class Router {
         return $this->routeParams[$key] ?? null;
     }
 
-    protected function addRoute(string $method, string $path, object|array $callback) : void
+    protected function addRoute(string $method, string $path, object|array $callback, array $middlewares = []) : void
     {
         $path = trim($path, '/');
-        $this->routes[$method]["/{$path}"] = $callback;
+        $this->routes[$method]["/{$path}"] = [
+            'callback' => $callback,
+            'middlewares' => $middlewares
+        ];
     }
 
     protected function matchRoute(string $method, string $path) : mixed
