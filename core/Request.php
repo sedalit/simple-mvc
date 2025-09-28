@@ -84,4 +84,9 @@ class Request {
 
         return $data;
     }
+
+    public function file(string $name, mixed $default = []) : mixed
+    {
+        return $_FILES[$name] ?? $default;
+    }
 }
