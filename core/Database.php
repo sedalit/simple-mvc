@@ -99,6 +99,12 @@ class Database {
         return $result;
     }
 
+    public function count(string $tableName) : int
+    {
+        $this->query("SELECT COUNT(*) FROM {$tableName}");
+        return $this->getColumn();
+    }
+
     protected function tryExecute(string $query, string $tableName, array $parameters = []) : ?PDOStatement
     {
         $tablesWhiteList = TABLES_WHITELIST ?? [];
