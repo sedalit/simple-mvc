@@ -24,29 +24,44 @@ class File {
         return filesize($filePath);
     }
 
-    public static function handleUpload(array $file, string $uploadDir = UPLOADS) : ?string
+    public static function handleUpload(array $files, string $uploadDir = UPLOADS) : ?array
     {
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            return null;
+        $result = [];
+
+        $isMulti = is_array($files['name']);
+        $filesCount = $isMulti ? count($files['name']) : 1;
+
+        for ($i = 0; $i < $filesCount; $i++) {
+            $file = [
+                'name' => $isMulti ? $files['name'][$i] : $files['name'],
+                'type'     => $isMulti ? $files['type'][$i]     : $files['type'],
+                'tmp_name' => $isMulti ? $files['tmp_name'][$i] : $files['tmp_name'],
+                'error'    => $isMulti ? $files['error'][$i]    : $files['error'],
+                'size'     => $isMulti ? $files['size'][$i]     : $files['size'],
+            ];
+
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                return null;
+            }
+
+            if ($uploadDir === UPLOADS) {
+                $uploadDir .= '/' . date('Y') . '/' . date('m') . '/' . date('d');
+            }
+
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            $ext = self::getExtension($file['name']);
+            $filename = uniqid('', true) . '.' . strtolower($ext);
+
+            $destination = rtrim($uploadDir, '/') . '/' . $filename;
+
+            if (move_uploaded_file($file['tmp_name'], $destination)) {
+                $result[] = $destination;
+            }
         }
 
-        if ($uploadDir === UPLOADS) {
-            $uploadDir .= '/' . date('Y') . '/' . date('m') . '/' . date('d');
-        }
-
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-
-        $ext = self::getExtension($file['name']);
-        $filename = uniqid('', true) . '.' . strtolower($ext);
-
-        $destination = rtrim($uploadDir, '/') . '/' . $filename;
-
-        if (move_uploaded_file($file['tmp_name'], $destination)) {
-            return $destination;
-        }
-
-        return null;
+        return !empty($result) ? $result : null;
     }
 }
