@@ -37,12 +37,12 @@ class Database {
         return $this;
     }
 
-    public function getOne() : array
+    public function getOne() : mixed
     {
         return $this->statement->fetch();
     }
 
-    public function getAll() : array
+    public function getAll() : mixed
     {
         return $this->statement->fetchAll();
     }
@@ -109,7 +109,7 @@ class Database {
     {
         $tablesWhiteList = TABLES_WHITELIST ?? [];
 
-        if (count($tablesWhiteList) > 0 && in_array($tableName, $tablesWhiteList)) {
+        if (count($tablesWhiteList) == 0 || in_array($tableName, $tablesWhiteList)) {
             return $this->query($query, $parameters)->statement;
         }
 
