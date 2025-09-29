@@ -17,7 +17,7 @@ class FileSizeRule extends ValidationRule {
         self::GB => ['gb'],
     ];
 
-    protected string $message = "File is too large. Max allowed size is :maxSize:.";
+    protected string $message = "File is too large. Max allowed size is :rule:.";
 
     protected string $targetUnit;
     protected int $maxSize;
@@ -36,7 +36,7 @@ class FileSizeRule extends ValidationRule {
             $sizeToShow .= 's';
         }
 
-        $this->message = str_replace(':maxSize:', $sizeToShow, $this->message);
+        $this->message = str_replace(':rule:', $sizeToShow, $this->message);
     }
 
     public static function key(): ?string

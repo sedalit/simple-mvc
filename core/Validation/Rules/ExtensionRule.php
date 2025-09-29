@@ -7,7 +7,7 @@ use PHPFramework\Utils\File;
 
 class ExtensionRule extends ValidationRule
 {
-    protected string $message = "File :fieldname: has wrong extension. Allowed :allowed:.";
+    protected string $message = "File :fieldname: has wrong extension. Allowed :rule:.";
 
     protected array $allowed = [];
 
@@ -17,7 +17,7 @@ class ExtensionRule extends ValidationRule
         $this->allowed = explode(',', $params[0]);
         $this->allowed = array_map('strtolower', $this->allowed);
 
-        $this->message = str_replace([':fieldname:', ':allowed:'], [self::FIELDNAME_PLACEHOLDER, $params[0]], $this->message);
+        $this->message = str_replace([':fieldname:', ':rule:'], [self::FIELDNAME_PLACEHOLDER, $params[0]], $this->message);
     }
 
     public static function key() : ?string

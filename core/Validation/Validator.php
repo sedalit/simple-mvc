@@ -6,6 +6,7 @@ use PHPFramework\Validation\Rules\EmailRule;
 use PHPFramework\Validation\Rules\ExtensionRule;
 use PHPFramework\Validation\Rules\FileRule;
 use PHPFramework\Validation\Rules\FileSizeRule;
+use PHPFramework\Validation\Rules\MatchRule;
 use PHPFramework\Validation\Rules\MaxRule;
 use PHPFramework\Validation\ValidationRuleInterface;
 use PHPFramework\Validation\Rules\RequiredRule;
@@ -23,6 +24,7 @@ class Validator {
         'extension' => ExtensionRule::class,
         'fileSize' => FileSizeRule::class,
         'file' => FileRule::class,
+        'match' => MatchRule::class,
     ];
 
     public function __construct(string $customRulesPath = VALIDATION_RULES)
@@ -33,7 +35,7 @@ class Validator {
     public function validate(array|\ArrayAccess $data, array $rules) : bool
     {
         $this->errors = [];
-        
+
         foreach ($rules as $field => $ruleString) {
             $ruleItems = explode('|', $ruleString);
             
@@ -47,7 +49,7 @@ class Validator {
                 $class = $this->rules[$name];
 
                 /** @var ValidationRuleInterface $rule */
-                $rule = new $class($field, $data[$field] ?? '', $param ? [$param] : []);
+                $rule = new $class($field, $data[$field] ?? '', $param ? [$param] : [], $data);
                 if (!$rule->passes()) {
                     $this->errors[$field][] = $rule->message();
                 }
