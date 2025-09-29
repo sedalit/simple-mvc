@@ -26,6 +26,11 @@ class Session {
         }
     }
 
+    public function has(string $key) : bool
+    {
+        return isset($_SESSION[$key]);
+    }   
+
     public function setFlash(string $key, mixed $value) : void
     {
         $_SESSION['flash'][$key] = $value;
