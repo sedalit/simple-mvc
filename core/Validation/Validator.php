@@ -36,11 +36,15 @@ class Validator {
     {
         $this->errors = [];
 
-        foreach ($rules as $field => $ruleString) {
-            $ruleItems = explode('|', $ruleString);
-            
-            foreach ($ruleItems as $ruleItem) {
-                [$name, $param] = array_pad(explode(':', $ruleItem, 2), 2, null);
+        foreach ($rules as $field => $rule) {
+            $ruleItems = is_array($rule) ? $rule : explode('|', $rule);
+            foreach ($ruleItems as $ruleKey => $ruleItem) {
+                if (isset($this->rules[$ruleKey])) {
+                    $name = $ruleKey;
+                    $param = $ruleItem;
+                } else {
+                    [$name, $param] = array_pad(explode(':', $ruleItem, 2), 2, null);
+                }  
 
                 if (!isset($this->rules[$name])) {
                     continue;
