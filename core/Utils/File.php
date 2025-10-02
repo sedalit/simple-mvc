@@ -24,6 +24,34 @@ class File {
         return filesize($filePath);
     }
 
+    public static function write(string $filePath, string $content) : bool
+    {
+        return file_put_contents($filePath, $content);
+    }
+
+    public static function serialize(string $filePath, mixed $content) : bool
+    {
+        return self::write($filePath, serialize($content));
+    }
+
+    public static function unlinkIfExists(string $filePath) : bool
+    {
+        if (file_exists($filePath)) {
+            return unlink($filePath);
+        }
+
+        return false;
+    }
+
+    public static function unserialize(string $filePath) : ?string
+    {
+        if (file_exists($filePath)) {
+            return unserialize(file_get_contents($filePath));
+        }
+
+        return null;
+    }
+
     public static function handleUpload(array $files, string $uploadDir = UPLOADS) : ?array
     {
         $result = [];
