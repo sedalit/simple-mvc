@@ -142,3 +142,10 @@ if (!function_exists('router')) {
         return app()->router();
     }
 }
+
+if (!function_exists('checkAuth')) {
+    function checkAuth() : bool
+    {
+        return session()->has('user');
+    }
+}
