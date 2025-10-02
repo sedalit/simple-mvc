@@ -15,6 +15,8 @@ class Application {
     protected Validator $validator;
     protected Database $database;
     protected Session $session;
+    protected Cache $cache;
+    protected array $container = [];
 
     public function __construct()
     {
@@ -28,6 +30,7 @@ class Application {
         $this->validator = new Validator();
         $this->database = new Database();
         $this->session = new Session();
+        $this->cache = new Cache();
     }
 
     public static function router() : Router
@@ -65,8 +68,23 @@ class Application {
         return self::$instance->session;
     }
 
+    public static function cache() : Cache
+    {
+        return self::$instance->cache;
+    }
+
     public function run() : void
     {
         echo $this->router->dispatch();
+    }
+
+    public function get(string $key, mixed $default = null) : mixed
+    {
+        return $this->container[$key] ?? $default;
+    }
+
+    public function set(string $key, mixed $value) : void
+    {
+        $this->container[$key] = $value;
     }
 }

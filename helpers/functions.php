@@ -1,6 +1,7 @@
 <?php
 
 use PHPFramework\Application;
+use PHPFramework\Cache;
 use PHPFramework\Database;
 use PHPFramework\Request;
 use PHPFramework\Response;
@@ -147,5 +148,12 @@ if (!function_exists('checkAuth')) {
     function checkAuth() : bool
     {
         return session()->has('user');
+    }
+}
+
+if (!function_exists('cache')) {
+    function cache() : Cache
+    {
+        return app()->cache();
     }
 }
