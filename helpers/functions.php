@@ -9,6 +9,7 @@ use PHPFramework\Router;
 use PHPFramework\Validation\Validator;
 use PHPFramework\View;
 use PHPFramework\Session;
+use PHPFramework\Utils\Env;
 
 if (!function_exists('app')) {
     function app() : Application
@@ -155,5 +156,12 @@ if (!function_exists('cache')) {
     function cache() : Cache
     {
         return app()->cache();
+    }
+}
+
+if (!function_exists('env')) {
+    function env(string $key, mixed $default = '') : mixed
+    {
+        return Env::get($key, $default);
     }
 }

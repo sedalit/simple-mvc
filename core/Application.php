@@ -3,6 +3,7 @@
 namespace PHPFramework;
 
 use PHPFramework\Validation\Validator;
+use PHPFramework\Utils\Env;
 
 class Application {
     public static Application $instance;
@@ -22,14 +23,17 @@ class Application {
     {
         self::$instance = $this;
 
+        Env::load();
+        require_once __DIR__ . '/../config/db.php';
+
         $this->uri = $_SERVER['REQUEST_URI'];
         $this->request = new Request($this->uri);
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
         $this->view = new View(LAYOUT);
         $this->validator = new Validator();
-        $this->database = new Database();
         $this->session = new Session();
+        $this->database = new Database();
         $this->cache = new Cache();
     }
 
