@@ -5,12 +5,17 @@ namespace PHPFramework;
 use PHPFramework\Interfaces\MiddlewareInterface;
 use PHPFramework\Routing\Route;
 use PHPFramework\Routing\RouteGroup;
+use PHPFramework\Middlewares\CsrfMiddleware;
 
 class Router {
     protected const GET = 'GET';
     protected const POST = 'POST';
     protected const PUT = 'PUT';
     protected const DELETE = 'DELETE';
+
+    protected array $defaultMiddlewares = [
+        CsrfMiddleware::class,
+    ];
 
     protected Request $request;
     protected Response $response;
@@ -68,17 +73,23 @@ class Router {
 
     public function post(string $path, object|array $callback, array $middlewares = []) : Route
     {
+        $middlewares = array_merge($middlewares, $this->defaultMiddlewares);
+
         return $this->addRoute(self::POST, $path, $callback, $middlewares);
     }
 
     public function put(string $path, object|array $callback, array $middlewares = []) : Route
     {
+        $middlewares = array_merge($middlewares, $this->defaultMiddlewares);
+
         return $this->addRoute(self::PUT, $path, $callback, $middlewares);
 
     }
 
     public function delete(string $path, object|array $callback, array $middlewares = []) : Route
     {
+        $middlewares = array_merge($middlewares, $this->defaultMiddlewares);
+
         return $this->addRoute(self::DELETE, $path, $callback, $middlewares);
     }
 

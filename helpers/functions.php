@@ -165,3 +165,10 @@ if (!function_exists('env')) {
         return Env::get($key, $default);
     }
 }
+
+use PHPFramework\Security\CsrfToken;
+
+function csrf() : string
+{
+    return '<input type="hidden" name="' . CsrfToken::INPUT_FIELD . '" value="' . h(CsrfToken::get()) . '">';
+}
