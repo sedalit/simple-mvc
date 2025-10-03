@@ -12,9 +12,11 @@ require_once CONFIG . '/serviceProviders.php';
 
 use PHPFramework\Application;
 use PHPFramework\Services\CoreService;
+use PHPFramework\Services\Mail\MailService;
 
 $app = new Application($_SERVER['REQUEST_URI'], [
     CoreService::class,
+    MailService::class,
     ...PROVIDERS
 ]);
 
