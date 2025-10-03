@@ -2,6 +2,7 @@
 
 namespace PHPFramework;
 
+use PHPFramework\Interfaces\ServiceProviderInterface;
 use PHPFramework\Validation\Validator;
 use PHPFramework\Utils\Env;
 
@@ -9,86 +10,84 @@ class Application {
     public static Application $instance;
 
     protected string $uri;
-    protected Request $request;
-    protected Response $response;
-    protected Router $router;
-    protected View $view;
-    protected Validator $validator;
-    protected Database $database;
-    protected Session $session;
-    protected Cache $cache;
-    protected array $container = [];
+    protected ServiceContainer $serviceContainer;
 
-    public function __construct()
+    public function __construct(string $uri, array $providers)
     {
         self::$instance = $this;
 
         Env::load();
         require_once __DIR__ . '/../config/db.php';
 
-        $this->uri = $_SERVER['REQUEST_URI'];
-        $this->request = new Request($this->uri);
-        $this->response = new Response();
-        $this->router = new Router($this->request, $this->response);
-        $this->view = new View(LAYOUT);
-        $this->validator = new Validator();
-        $this->session = new Session();
-        $this->database = new Database();
-        $this->cache = new Cache();
+        $this->uri = $uri;
+       
+        $this->serviceContainer = new ServiceContainer();
+        
+        foreach ($providers as $provider) {
+            /** @var ServiceProviderInterface $provider */
+            (new $provider())->register($this->serviceContainer);
+        }
     }
 
     public static function router() : Router
     {
-        return self::$instance->router;
+        return self::$instance->serviceContainer->get(Router::class);
     }
 
     public static function request() : Request
     {
-        return self::$instance->request;
+        return self::$instance->serviceContainer->get(Request::class);
     }
 
     public static function view() : View
     {
-        return self::$instance->view;
+        return self::$instance->serviceContainer->get(View::class);
     }
 
     public static function response() : Response
     {
-        return self::$instance->response;
+        return self::$instance->serviceContainer->get(Response::class);
     }
 
     public static function validator() : Validator
     {
-        return self::$instance->validator;
+        return self::$instance->serviceContainer->get(Validator::class);
     }
 
     public static function database() : Database
     {
-        return self::$instance->database;
+        return self::$instance->serviceContainer->get(Database::class);
     }
 
     public static function session() : Session
     {
-        return self::$instance->session;
+        return self::$instance->serviceContainer->get(Session::class);
     }
 
     public static function cache() : Cache
     {
-        return self::$instance->cache;
+        return self::$instance->serviceContainer->get(Cache::class);
     }
 
     public function run() : void
     {
-        echo $this->router->dispatch();
+        echo $this->router()->dispatch();
     }
 
-    public function get(string $key, mixed $default = null) : mixed
+    public function get(string $id) : mixed
     {
-        return $this->container[$key] ?? $default;
+        return $this->serviceContainer->get($id);
     }
 
-    public function set(string $key, mixed $value) : void
+    public static function __callStatic($name, $arguments)
     {
-        $this->container[$key] = $value;
+        if ($service = self::$instance->serviceContainer->get($name)) {
+            return $service;
+        }
+    }
+
+    public function getUri() : string
+    {
+        return $this->uri;
     }
 }
