@@ -94,4 +94,34 @@ class Request {
     {
         return $_SERVER['REQUEST_URI'];
     }
+
+    public function headers() : array
+    {
+        $headers = [];
+
+        foreach ($_SERVER as $key => $value) {
+            if (str_starts_with($key, 'HTTP_')) {
+                $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
+                $headers[$name] = $value;
+            } elseif (in_array($key, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
+                $name = str_replace('_', '-', ucwords(strtolower($key), '_'));
+                $headers[$name] = $value;
+            }
+        }
+
+        return $headers;
+    }
+
+    public function header(string $name) : ?string
+    {
+        $headers = $this->headers();
+
+        foreach ($headers as $key => $value) {
+            if (strcasecmp($key, $name) === 0) {
+                return $value;
+            }
+        }
+
+        return null;
+    }
 }
