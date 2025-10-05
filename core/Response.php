@@ -3,21 +3,61 @@
 namespace PHPFramework;
 
 class Response {
-    public function setCode(int $code) : void
+    protected int $code = 200;
+    protected array $headers = [];
+    protected ?string $redirect = null;
+    protected array $params = [];
+
+    public function setCode(int $code) : self
     {
-        http_response_code($code);
+        $this->code = $code;
+
+        return $this;
     }
 
-    public function redirect(string $url = '', array $params = []) : never
+    public function send(?int $code = null) : void
     {
-        $redirect = $url;
+        http_response_code($code === null ? $this->code : $code);
 
-        if (!$redirect) {
-            $redirect = $_SERVER['HTTP_REFERER'] ?? baseUrl();
+        extract($this->params);
+        foreach ($this->headers as $key => $value) {
+            header("{$key}: {$value}");
         }
 
-        extract($params);
-        header("Location: {$redirect}");
-        die;
+        if ($this->redirect) {
+            die;
+        }
+    }
+
+    public function redirect(string $url = '', array $params = []) : self
+    {
+        $redirect = $url ?: ($_SERVER['HTTP_REFERER'] ?? baseUrl());
+        $this->redirect = $redirect;
+
+        $this->setCode(302);
+        $this->headers['Location'] = $redirect;
+        $this->params = $params;
+
+        return $this;
+    }
+
+    public function getCode() : int
+    {
+        return $this->code;
+    }
+
+    public function getHeaders() : array
+    {
+        return $this->headers;
+    }
+
+    public function getRedirect() : ?string
+    {
+        return $this->redirect;
+    }
+
+    public function addHeader(string $name, string $value) : void
+    {
+        $this->headers[$name] = $value;
     }
 }
