@@ -20,7 +20,7 @@ class Cache {
     {
         $file = $this->fileNameByKey($key);
         $content = File::unserialize($file);
-
+        
         if (!$content) return $default;
 
         if (time() <= $content['end_time']) {

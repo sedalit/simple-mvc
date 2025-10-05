@@ -107,7 +107,10 @@ class Database {
 
     protected function tryExecute(string $query, string $tableName, array $parameters = []) : ?PDOStatement
     {
-        $tablesWhiteList = TABLES_WHITELIST ?? [];
+        $tablesWhiteList = [];
+        if (defined('TABLES_WHITELIST')) {
+            $tablesWhiteList = TABLES_WHITELIST ?? [];
+        }
 
         if (count($tablesWhiteList) == 0 || in_array($tableName, $tablesWhiteList)) {
             return $this->query($query, $parameters)->statement;

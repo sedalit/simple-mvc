@@ -24,6 +24,7 @@ class Text {
  
         $text = preg_replace('/[^a-z0-9- ]+/', '', $text);
         $text = preg_replace('/[^a-z0-9-]+/', '-', $text);
+        $text = preg_replace('/-+/', '-', $text);
         $text = trim($text, '-');
 
         if ($text && $id !== null) {
@@ -31,5 +32,18 @@ class Text {
         }
 
         return $text ?: '';
+    }
+
+    public static function trim(string|array|null $text, string $characters = " \n\r\t\v\x00") : string|array
+    {
+        if ($text === null) return '';
+
+        if (is_array($text)) {
+            return array_map(function ($str) use ($characters) {
+                return trim($str, $characters);
+            }, $text);
+        }
+
+        return trim($text, $characters);
     }
 }

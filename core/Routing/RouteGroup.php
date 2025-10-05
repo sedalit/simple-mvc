@@ -29,4 +29,9 @@ class RouteGroup {
 
         return $this;
     }
+
+    public function getName() : string
+    {
+        return $this->name;
+    }
 }

@@ -3,12 +3,12 @@
 namespace PHPFramework;
 
 class View {
-    protected string $layout;
+    protected ?string $layout;
     protected string $content = '';
 
-    public function __construct($layout)
+    public function __construct(?string $pathToLayout = null)
     {
-        $this->layout = $layout;
+        $this->layout = $pathToLayout;
     }
 
     public function render(string $viewName, array $data = [], mixed $layout = '') : bool|string
@@ -16,7 +16,7 @@ class View {
         $viewFile = VIEWS . "/{$viewName}.php";
         $this->content = $this->renderFile($viewFile, $data);
 
-        if ($layout === false) {
+        if ($layout === false || !$this->layout) {
             return $this->content;
         }
 
@@ -38,12 +38,18 @@ class View {
         }
     }
 
+    public function setLayout(string $pathToLayout) : void
+    {
+        $this->layout = $pathToLayout;
+    }
+
     private function renderFile(string $fileName, array $data = []) : bool|string|View
     {
         if (is_file($fileName)) {
             extract($data);
             ob_start();
-            require_once $fileName;
+            require $fileName;
+
             return ob_get_clean();
         } else {
             return abort('Internal server error', 500);

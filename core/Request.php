@@ -2,6 +2,8 @@
 
 namespace PHPFramework;
 
+use PHPFramework\Utils\Text;
+
 class Request {
     protected const METHOD_HIDDEN_KEY = '_method';
     protected string $uri;
@@ -36,7 +38,8 @@ class Request {
                 $params = explode($separator, $this->uri);
                 
                 if (!str_contains($params[0], '=')) {
-                    return trim($params[0], '/');
+                    $trimmedFromSpaces = trim($params[0]);
+                    return trim($trimmedFromSpaces, '/');
                 }
             }
         }
@@ -85,12 +88,28 @@ class Request {
         return $data;
     }
 
+    public static function data() : array
+    {
+        $data = [];
+
+        $requestData = $_POST;
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $requestData = $_GET;
+        }
+
+        foreach ($requestData as $key => $value) {
+            $data[$key] = Text::trim($value);
+        }
+
+        return $data;
+    }
+
     public function file(string $name, mixed $default = []) : mixed
     {
         return $_FILES[$name] ?? $default;
     }
 
-    public function requestUrl() : string
+    public static function requestUrl() : string
     {
         return $_SERVER['REQUEST_URI'];
     }

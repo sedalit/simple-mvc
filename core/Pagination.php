@@ -2,6 +2,8 @@
 
 namespace PHPFramework;
 
+use PHPFramework\Request;
+
 class Pagination {
     protected const DEFAULT_MIDDLE_SIZE = 3;
 
@@ -25,12 +27,12 @@ class Pagination {
         $this->middleSize = $this->getMiddleSize();
     }
 
-    protected function getPagesCount() : int
+    public function getPagesCount() : int
     {
         return (int)ceil($this->total / $this->perPage);
     }
 
-    protected function getCurrentPage() : int
+    public function getCurrentPage() : int
     {
         if ($this->page < 1 || $this->page > $this->pagesCount) {
             $this->page = 1;
@@ -41,7 +43,7 @@ class Pagination {
 
     protected function getUri() : string
     {
-        $url = explode('?', request()->requestUrl());
+        $url = explode('?', Request::requestUrl());
         $uri = $url[0];
 
         if (isset($url[1]) && !in_array($url[1], ['', '&'])) {
@@ -58,9 +60,9 @@ class Pagination {
         return $uri;
     }
 
-    protected function getMiddleSize() : int
+    public function getMiddleSize() : int
     {
-        return ($this->pagesCount <= $this->maxPages) ? $this->pagesCount : self::DEFAULT_MIDDLE_SIZE;
+        return ($this->pagesCount <= $this->maxPages) ? $this->pagesCount : ($this->middleSize ?? self::DEFAULT_MIDDLE_SIZE);
     }
 
     public function getOffset() : int
@@ -98,7 +100,7 @@ class Pagination {
             }
         }
 
-        if ($this->currentPage < $this->pagesCount) {
+        if ($this->currentPage < $this->pagesCount - 1) {
             $page = $this->currentPage + 1;
             $pages[] = ['label' => '&gt;', 'page' => $page, 'link' => $this->getLink($page), 'active' => false];
         }

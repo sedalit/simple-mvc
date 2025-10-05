@@ -2,6 +2,8 @@
 
 namespace PHPFramework;
 
+use PHPFramework\Utils\Text;
+
 abstract class Model implements \ArrayAccess {
     protected array $fillable = [];
     protected array $attributes = [];
@@ -17,11 +19,11 @@ abstract class Model implements \ArrayAccess {
 
     public function loadData() : void
     {
-        $data = request()->getData();
+        $data = Request::data();
         
         foreach ($this->fillable as $value) {
             $fieldValue = isset($data[$value]) ? $data[$value] : '';
-            $this->attributes[$value] = $fieldValue;
+            $this->attributes[$value] = Text::trim($fieldValue);
         }
     }
 

@@ -43,7 +43,7 @@ class File {
         return false;
     }
 
-    public static function unserialize(string $filePath) : ?string
+    public static function unserialize(string $filePath) : mixed
     {
         if (file_exists($filePath)) {
             return unserialize(file_get_contents($filePath));

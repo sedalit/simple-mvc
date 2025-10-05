@@ -18,13 +18,13 @@ use PHPFramework\View;
 class CoreService implements ServiceProviderInterface {
     public function register(ServiceContainer $c) : void
     {
-        $c->setSingleton('request',  new Factory(Request::class, [Application::$instance->getUri()]));
+        $c->setSingleton('request',  new Factory(Request::class, [Request::requestUrl()]));
         $c->setSingleton('response', new Factory(Response::class));
 
         $request = $c->get('request');
         $response = $c->get('response');
         $c->setSingleton('router', new Factory(Router::class, [$request, $response]));
-        $c->setSingleton('view', new Factory(View::class, [LAYOUT]));
+        $c->setSingleton('view', new Factory(View::class));
         $c->setSingleton('validator', new Factory(Validator::class));
         $c->setSingleton('session', new Factory(Session::class));
         $c->setSingleton('database', new Factory(Database::class));

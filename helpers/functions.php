@@ -39,7 +39,7 @@ if (!function_exists('response')) {
 if (!function_exists('redirect')) {
     function redirect(string $url = '', array $params = [])
     {
-        return response()->redirect($url, $params);
+        return response()->redirect($url, $params)->send();
     }
 }
 
@@ -105,11 +105,15 @@ if (!function_exists('formErrors')) {
 if (!function_exists('abort')) {
     function abort(string $error = '', int $code = 404) : View
     {
-        response()->setCode($code);
-        if (DEBUG || $code === 404) {
-            echo view('error', ['code' => $code, 'message' => $error], false);
+        try {
+            response()->setCode($code)->send();
+            if (DEBUG || $code === 404) {
+                echo view('error', ['code' => $code, 'message' => $error], false);
+            }
+            die;
+        } catch (\Throwable $th) {
+            throw new Exception($error, $code);
         }
-        die;
     }
 }
 

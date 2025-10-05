@@ -14,6 +14,11 @@ class MaxRule extends ValidationRule {
 
     public function passes() : bool
     {
-        return mb_strlen($this->value, ENCODING) <= ($this->params[0] ?? 0);
+        $encoding = 'UTF-8';
+        if (defined('ENCODING')) {
+            $encoding = ENCODING;
+        }
+
+        return mb_strlen($this->value, $encoding) <= ($this->params[0] ?? 0);
     }
 }
