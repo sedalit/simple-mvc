@@ -6,6 +6,7 @@ use PHPFramework\Factory;
 use PHPFramework\Interfaces\ServiceProviderInterface;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPFramework\ServiceContainer;
+use PHPMailer\PHPMailer\Exception;
 
 class MailService implements ServiceProviderInterface {
     protected PHPMailer $phpMailer;
@@ -20,7 +21,7 @@ class MailService implements ServiceProviderInterface {
     {
         require_once CONFIG . '/mail.php';
 
-        $this->phpMailer = new PHPMailer();
+        $this->phpMailer = new PHPMailer(true);
         $this->phpMailer->isSMTP(); 
         $this->phpMailer->Host = MAIL['host'];
         $this->phpMailer->Username = MAIL['username'];
@@ -42,6 +43,11 @@ class MailService implements ServiceProviderInterface {
         }
 
         return $this->sendMail($mail);
+    }
+
+    public function getMails() : array
+    {
+        return $this->mails;
     }
 
     protected function sendMail(Mail $mail) : bool
@@ -67,6 +73,18 @@ class MailService implements ServiceProviderInterface {
         $this->phpMailer->Subject = $mail->subject;
         $this->phpMailer->Body = $mail->body;
 
-        return $this->phpMailer->send();
+        $error = null;
+        try {
+            $result = $this->phpMailer->send();
+        } catch (Exception $e) {
+            $result = false;
+            $error = $e->getMessage();
+        }
+        $data = ['mail' => $mail, 'result' => $result];
+        if ($error) $data['error'] = $error;
+
+        $this->mails[] = $data;
+
+        return $result;
     }
 }
