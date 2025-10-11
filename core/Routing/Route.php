@@ -22,6 +22,10 @@ class Route {
 
     public function getPath() : string
     {
+        if (str_contains($this->path, '/')) {
+            return $this->group ? "{$this->group}{$this->path}" : $this->path;
+        }
+        
         return $this->group ? "{$this->group}/{$this->path}" : $this->path;
     }
 

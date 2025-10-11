@@ -34,4 +34,9 @@ class RouteGroup {
     {
         return $this->name;
     }
+
+    public function getRoutes() : array
+    {
+        return $this->routes;
+    }
 }

@@ -7,8 +7,14 @@ use PHPFramework\Interfaces\MiddlewareInterface;
 class AuthMiddleware implements MiddlewareInterface {
     public function handle(\PHPFramework\Request $request, \PHPFramework\Response $response, callable $next): mixed
     {
+        $redirect = '/';
+
+        if (defined('LOGIN')) {
+            $redirect = LOGIN;
+        }
+
         if (!checkAuth()) {
-            redirect(LOGIN);
+            redirect($redirect);
             return false;
         }
 
