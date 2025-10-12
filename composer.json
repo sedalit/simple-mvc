@@ -1,16 +1,15 @@
 {
     "name": "sedalit/simple-mvc-framework",
-    "type": "project",
+    "type": "library",
     "autoload": {
         "psr-4": {
-            "PHPFramework\\": "core/",
-            "App\\": "app/"
+            "PHPFramework\\": "src/"
         },
         "files": [
             "helpers/functions.php"
         ],
         "classmap": [
-            "core/"
+            "src/"
         ]
     },
     "require": {
@@ -33,7 +32,7 @@
             "Tests\\": "tests/"
         },
         "classmap": [
-            "core/"
+            "src/"
         ]
     }
 }
