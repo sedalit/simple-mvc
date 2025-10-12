@@ -1,9 +1,11 @@
 # Simple MVC Framework
 
-Легковесный PHP MVC фреймворк для быстрой разработки веб-приложений, который был создан в учебно-познавательных целях. Создан с акцентом на простоту, производительность и современные практики разработки.
-
 [![PHP Version](https://img.shields.io/badge/PHP-%3E%3D8.0-blue)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Packagist](https://img.shields.io/packagist/v/sedalit/simple-mvc-framework)](https://packagist.org/packages/sedalit/simple-mvc-framework)
+[![Downloads](https://img.shields.io/packagist/dt/sedalit/simple-mvc-framework)](https://packagist.org/packages/sedalit/simple-mvc-framework)
+
+Легковесный PHP MVC фреймворк для быстрой разработки веб-приложений, который был создан в учебно-познавательных целях. Создан с акцентом на простоту, производительность и современные практики разработки.
 
 ## 🚀 Особенности
 
@@ -29,132 +31,92 @@
 - Composer
 - Apache/Nginx с mod_rewrite
 
-## 📦 Установка
+## 🚀 Установка
 
-### 1. Клонируйте репозиторий
-
-```bash
-git clone https://github.com/sedalit/simple-mvc-framework.git
-cd simple-mvc-framework
-```
-
-### 2. Установите зависимости
+### Создайте новый проект
 
 ```bash
-composer install
+composer create-project sedalit/simple-php-framework-skeleton my-app
+cd my-app
 ```
 
-### 3. Настройте окружение
-
-Скопируйте `.env.example` в `.env` и настройте параметры:
+### Настройте .env
 
 ```bash
 cp .env.example .env
+# Edit .env with your database credentials
 ```
 
-Отредактируйте `.env`:
+### Запустите dev-сервер
 
-```env
-# DATABASE
-DB_HOST="localhost"
-DB_NAME="your_database"
-DB_USERNAME="your_username"
-DB_PASSWORD="your_password"
-DB_CHARSET="utf8mb4"
-
-# MAIL
-MAIL_HOST="smtp.example.com"
-MAIL_USERNAME="your@email.com"
-MAIL_PASSWORD="your_password"
-MAIL_PORT="465"
-MAIL_SMTP_AUTH=true
-MAIL_SMTP_SECURE='ssl'
+```bash
+php -S localhost:8000 -t public
 ```
 
-### 4. Настройте веб-сервер
+Откройте `http://localhost:8000` в браузере.
 
-Укажите `public` как корневую директорию. Пример для Apache включен в `.htaccess`.
+## 📖 Документация
 
-### 5. Настройте приложение
+### Маршруты
 
-Отредактируйте `config/init.php`:
+Определите маршруты в `config/routes.php`:
 
 ```php
-const APP_NAME = 'Your App Name';
-const PATH = 'http://your-domain.local';
-const DEBUG = 1; // 0 для production
+use App\Controllers\PostController;
+
+// Базовые маршруты
+$app->router()->get('/', [IndexController::class, 'index']);
+$app->router()->post('/posts', [PostController::class, 'store']);
+
+// Маршрут с динамическими параметрами
+$app->router()->get('/posts/(?<id>\d+)', [PostController::class, 'show']);
+
+// Маршрут с middleware
+$app->router()->get('/dashboard', [DashboardController::class, 'index'], [
+    AuthMiddleware::class
+]);
+
+// Группа маршрутов
+$app->router()->group('/admin', [
+    $app->router()->get('/users', [AdminController::class, 'users']),
+    $app->router()->get('/settings', [AdminController::class, 'settings']),
+])->middleware([AuthMiddleware::class]);
 ```
 
-## 🎯 Быстрый старт
-
-### Создание контроллера
+### Контроллеры
 
 ```php
-<?php
-
 namespace App\Controllers;
 
 class PostController extends BaseController 
 {
-    public function index() : mixed
+    public function index(): mixed
     {
         $posts = db()->findAll('posts');
         
-        return $this->render('posts/index', [
-            'posts' => $posts
-        ]);
+        return $this->render('posts/index', ['posts' => $posts]);
     }
     
-    public function show() : mixed
+    public function show(): mixed
     {
         $id = router()->routeParam('id');
         $post = db()->findOrFail('posts', $id);
         
-        return $this->render('posts/show', [
-            'post' => $post
-        ]);
+        return $this->render('posts/show', ['post' => $post]);
     }
 }
 ```
 
-### Определение маршрутов
-
-В файле `config/routes.php`:
+### Модели
 
 ```php
-<?php
-
-use App\Controllers\PostController;
-
-// Простые маршруты
-$app->router()->get('/', [IndexController::class, 'index']);
-$app->router()->get('/posts', [PostController::class, 'index']);
-$app->router()->get('/posts/(?<id>\d+)', [PostController::class, 'show']);
-
-// Маршруты с middleware
-$app->router()->post('/posts', [PostController::class, 'store'], [
-    AuthMiddleware::class
-]);
-
-// Группы маршрутов
-$app->router()->group('/admin', [
-    $app->router()->get('/dashboard', [AdminController::class, 'index']),
-    $app->router()->get('/users', [AdminController::class, 'users']),
-])->middleware([AuthMiddleware::class]);
-```
-
-### Создание модели
-
-```php
-<?php
-
 namespace App\Models;
 
 use PHPFramework\Model;
 
 class Post extends Model 
 {
-    protected array $fillable = ['title', 'content', 'author_id'];
+    protected array $fillable = ['title', 'content', 'user_id'];
     
     protected function tableName(): string 
     {
@@ -166,129 +128,59 @@ class Post extends Model
         return 'id';
     }
 }
-```
 
-### Работа с моделью
-
-```php
-// Создание
+// Использование
 $post = new Post();
 $post->title = 'My Post';
 $post->content = 'Content here';
 $id = $post->save();
 
-// Обновление
-$post = new Post();
-$post->id = 1;
-$post->title = 'Updated Title';
 $post->update();
-
-// Удаление
-$post->delete(1);
+$post->delete($id);
 ```
 
-### Создание представления
-
-`app/Views/posts/index.php`:
+### Валидация
 
 ```php
-<div class="container">
-    <h1>Posts</h1>
-    
-    <?php foreach($posts as $post): ?>
-        <article>
-            <h2><?= h($post['title']) ?></h2>
-            <p><?= h($post['content']) ?></p>
-        </article>
-    <?php endforeach; ?>
-</div>
-```
+$data = request()->post();
 
-### Валидация форм
+$rules = [
+    'email' => 'required|email',
+    'password' => 'required|min:8',
+    'password_confirm' => 'required|match:password',
+    'username' => 'required|min:3|max:20|unique:users',
+    'avatar' => 'file|extension:jpg,png|fileSize:2MB'
+];
 
-```php
-public function store() : mixed
-{
-    $data = request()->post();
-    
-    $rules = [
-        'email' => 'required|email',
-        'password' => 'required|min:8',
-        'password_confirm' => 'required|match:password',
-        'username' => 'required|min:3|max:20|unique:users'
-    ];
-    
-    if (!validate($data, $rules)) {
-        $errors = validator()->errors();
-        return $this->render('form', ['errors' => $errors]);
-    }
-    
-    // Обработка данных
+if (!validate($data, $rules)) {
+    $errors = validator()->errors();
+    return $this->render('form', ['errors' => $errors]);
 }
 ```
 
-### Работа с сессиями
+### Представления
 
 ```php
-// Установка значения
-session()->set('user_id', 123);
+// В контроллере
+return $this->render('posts/index', [
+    'title' => 'All Posts',
+    'posts' => $posts
+]);
 
-// Получение значения
-$userId = session()->get('user_id');
+// В представлении (app/Views/posts/index.php)
+<h1><?= h($title) ?></h1>
 
-// Flash сообщения
-session()->setFlash('success', 'Post created successfully!');
-$message = session()->getFlash('success');
-
-// Проверка существования
-if (session()->has('user_id')) {
-    // ...
-}
+<?php foreach($posts as $post): ?>
+    <article>
+        <h2><?= h($post['title']) ?></h2>
+        <p><?= h($post['content']) ?></p>
+    </article>
+<?php endforeach; ?>
 ```
 
-### Кеширование
+### Middleware
 
 ```php
-// Сохранение в кеш на 1 час
-cache()->set('popular_posts', $posts, 3600);
-
-// Получение из кеша
-$posts = cache()->get('popular_posts', []);
-
-// Удаление из кеша
-cache()->forget('popular_posts');
-```
-
-### Отправка email
-
-```php
-use PHPFramework\Services\Mail\Mail;
-
-$mail = new Mail(
-    from: 'noreply@example.com',
-    subject: 'Welcome!',
-    body: 'Welcome to our platform',
-    to: ['user@example.com']
-);
-
-App::mailer()->send($mail);
-```
-
-## 🛡️ Middleware
-
-Фреймворк поддерживает middleware для обработки запросов:
-
-### Встроенные Middleware
-
-- **AuthMiddleware** - Проверка авторизации пользователя
-- **GuestMiddleware** - Доступ только для неавторизованных
-- **CsrfMiddleware** - Защита от CSRF атак (автоматически для POST/PUT/DELETE)
-
-### Создание собственного Middleware
-
-```php
-<?php
-
 namespace App\Middlewares;
 
 use PHPFramework\Interfaces\MiddlewareInterface;
@@ -308,84 +200,71 @@ class AdminMiddleware implements MiddlewareInterface
 }
 ```
 
-## 📚 Валидация
-
-### Встроенные правила валидации
-
-- `required` - Обязательное поле
-- `email` - Email адрес
-- `min:n` - Минимальная длина
-- `max:n` - Максимальная длина
-- `match:field` - Совпадение с другим полем
-- `unique:table` - Уникальность в таблице
-- `file` - Файл загружен без ошибок
-- `fileSize:size` - Размер файла (например, `2MB`)
-- `extension:ext1,ext2` - Допустимые расширения
-
-### Создание собственного правила
+### Сессии
 
 ```php
-<?php
+// Установка значение
+session()->set('user_id', 123);
 
-namespace App\Validation\Rules;
+// Получение значения
+$userId = session()->get('user_id');
 
-use PHPFramework\Validation\ValidationRule;
+// Flash-сообщения
+session()->setFlash('success', 'Post created!');
+$message = session()->getFlash('success');
 
-class PhoneRule extends ValidationRule 
-{
-    protected string $message = "The :fieldname: must be a valid phone number";
-    
-    public static function key(): ?string 
-    {
-        return 'phone';
-    }
-    
-    public function passes(): bool 
-    {
-        return preg_match('/^\+?[1-9]\d{10,14}$/', $this->value);
-    }
+// Проверка наличия
+if (session()->has('user_id')) {
+    // User is logged in
 }
 ```
 
-## 🗃️ База данных
-
-### Прямые запросы
+### Кэш
 
 ```php
-// SELECT
-$users = db()->query("SELECT * FROM users WHERE status = ?", ['active'])->getAll();
+// Сохранить в кэш со сроком жизни в 1 час
+cache()->set('popular_posts', $posts, 3600);
 
-// INSERT
-db()->query("INSERT INTO users (name, email) VALUES (?, ?)", ['John', 'john@example.com']);
-$id = db()->getInsertedId();
+// Получить из кэша
+$posts = cache()->get('popular_posts', []);
 
-// UPDATE
-db()->query("UPDATE users SET name = ? WHERE id = ?", ['Jane', 1]);
-$affected = db()->rowCount();
-
-// DELETE
-db()->query("DELETE FROM users WHERE id = ?", [1]);
+// Удалить из кэша
+cache()->forget('popular_posts');
 ```
 
-### Готовые методы
+### Почта
 
 ```php
-// Получить все записи
-$users = db()->findAll('users');
+use PHPFramework\Services\Mail\Mail;
 
-// Получить одну запись
-$user = db()->findOne('users', 1);
+$mail = new Mail(
+    from: 'noreply@example.com',
+    subject: 'Welcome!',
+    body: 'Welcome to our platform',
+    to: ['user@example.com']
+);
 
-// Получить или выбросить 404
-$user = db()->findOrFail('users', 1);
-
-// Подсчет записей
-$count = db()->count('users');
+App::mailer()->send($mail);
 ```
 
-## 🔧 Helper функции
+## 🎨 CLI команды
 
-Фреймворк предоставляет удобные helper функции:
+```bash
+# Генерация файлов
+php bin/console make:controller PostController
+php bin/console make:model Post
+php bin/console make:middleware AdminMiddleware
+php bin/console make:rule PhoneRule
+
+# Управление приложением
+php bin/console cache:clear
+php bin/console app:setup
+
+# Помощь
+php bin/console help
+```
+
+## 🔧 Функции-хэлперы
 
 ```php
 // Приложение
@@ -410,7 +289,7 @@ db() // Объект Database
 session() // Объект Session
 checkAuth() // Проверка авторизации
 
-// Кеш
+// Кэш
 cache() // Объект Cache
 
 // URL
@@ -429,50 +308,49 @@ old('field') // Старое значение поля
 formErrors('field', $errors) // Вывод ошибок валидации
 ```
 
-## 📄 Структура проекта
+## 📚 Правила валидации
+
+- `required` - Field is required
+- `email` - Valid email address
+- `min:n` - Minimum length
+- `max:n` - Maximum length
+- `match:field` - Match another field
+- `unique:table` - Unique in database table
+- `file` - File uploaded successfully
+- `fileSize:size` - File size limit (e.g., `2MB`)
+- `extension:ext1,ext2` - Allowed file extensions
+
+## 🏗️ Структура
 
 ```
-simple-mvc-framework/
-├── app/
-│   ├── Controllers/        # Контроллеры приложения
-│   ├── Models/            # Модели данных
-│   ├── Views/             # Представления
-│   │   ├── layouts/       # Шаблоны макетов
-│   │   └── ...
-│   └── Validation/
-│       └── Rules/         # Пользовательские правила валидации
-├── config/
-│   ├── init.php           # Основная конфигурация
-│   ├── db.php             # Конфигурация БД
-│   ├── mail.php           # Конфигурация почты
-│   ├── routes.php         # Определение маршрутов
-│   └── serviceProviders.php # Сервис-провайдеры
-├── core/                  # Ядро фреймворка
-│   ├── Application.php
-│   ├── Router.php
-│   ├── Database.php
-│   └── ...
-├── helpers/
-│   └── functions.php      # Helper функции
-├── public/                # Публичная директория
-│   ├── index.php          # Точка входа
-│   ├── .htaccess
-│   └── assets/            # CSS, JS, изображения
-├── tmp/
-│   └── cache/             # Файлы кеша
-├── uploads/               # Загруженные файлы
-├── vendor/                # Composer зависимости
-├── .env.example           # Пример environment файла
-└── composer.json
+Framework Structure (vendor/sedalit/simple-mvc-framework/src/)
+├── Application.php          # Application core
+├── Router.php              # Route dispatcher
+├── Database.php            # Database wrapper
+├── QueryBuilder.php        # Fluent query builder
+├── Controller.php          # Base controller
+├── Model.php              # Base model with ActiveRecord
+├── View.php               # View renderer
+├── Request.php            # HTTP request
+├── Response.php           # HTTP response
+├── Session.php            # Session management
+├── Cache.php              # File cache
+├── Pagination.php         # Pagination logic
+├── ServiceContainer.php   # DI container
+├── Interfaces/            # Interfaces
+├── Middlewares/           # Built-in middleware
+├── Routing/              # Routing components
+├── Security/             # Security features
+├── Services/             # Framework services
+├── Utils/                # Utility classes
+├── Validation/           # Validation system
+└── helpers.php           # Helper functions
 ```
 
 ## 🧪 Тестирование
 
-Фреймворк настроен для работы с PHPUnit:
-
 ```bash
-composer require --dev phpunit/phpunit
-./vendor/bin/phpunit tests/
+composer test
 ```
 
 ## 🤝 Вклад в разработку
@@ -494,3 +372,7 @@ Contributions, issues и feature requests приветствуются!
 ## 🌟 Поддержка проекта
 
 Если проект оказался полезным, поставьте ⭐️!
+
+## 📖 Связанные проекты
+
+- [simple-php-framework-skeleton](https://github.com/sedalit/simple-php-framework-skeleton) - Скелет приложения для быстрого старта
