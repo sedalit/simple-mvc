@@ -34,5 +34,10 @@
         "classmap": [
             "src/"
         ]
-    }
+    },
+    "bin": [
+        "bin/framework"
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
