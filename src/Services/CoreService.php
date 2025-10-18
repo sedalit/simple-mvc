@@ -14,6 +14,7 @@ use PHPFramework\ServiceContainer;
 use PHPFramework\Session;
 use PHPFramework\Validation\Validator;
 use PHPFramework\View;
+use PHPFramework\Container;
 
 class CoreService implements ServiceProviderInterface {
     public function register(ServiceContainer $c) : void
@@ -29,5 +30,6 @@ class CoreService implements ServiceProviderInterface {
         $c->setSingleton('session', new Factory(Session::class));
         $c->setSingleton('database', new Factory(Database::class));
         $c->setSingleton('cache', new Factory(Cache::class));
+        $c->setSingleton('container', new Factory(Container::class));
     }
 }
