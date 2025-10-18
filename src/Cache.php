@@ -37,6 +37,13 @@ class Cache {
         File::unlinkIfExists($file);
     }
 
+    public function removeDir() : void
+    {
+        if (is_dir(CACHE)) {
+            rmdir(CACHE);
+        }
+    }
+
     protected function fileNameByKey(string $key) : string
     {
         return CACHE . '/' . md5($key) . '.' . self::EXTENSION;

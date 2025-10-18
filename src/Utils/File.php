@@ -26,6 +26,9 @@ class File {
 
     public static function write(string $filePath, string $content) : bool
     {
+        $dirName = dirname($filePath);
+        self::makeDirIfNotExists($dirName);
+        
         return file_put_contents($filePath, $content);
     }
 
@@ -91,5 +94,14 @@ class File {
         }
 
         return !empty($result) ? $result : null;
+    }
+
+    public static function makeDirIfNotExists(string $dirPath) : bool
+    {
+        if (!is_dir($dirPath)) {
+            return mkdir($dirPath, 0755, true);
+        }
+
+        return true;
     }
 }
