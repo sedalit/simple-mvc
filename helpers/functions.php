@@ -2,6 +2,7 @@
 
 use PHPFramework\Application;
 use PHPFramework\Cache;
+use PHPFramework\Container;
 use PHPFramework\Database;
 use PHPFramework\Request;
 use PHPFramework\Response;
@@ -167,6 +168,13 @@ if (!function_exists('env')) {
     function env(string $key, mixed $default = '') : mixed
     {
         return Env::get($key, $default);
+    }
+}
+
+if (!function_exists('container')) {
+    function container() : Container
+    {
+        return app()->container();
     }
 }
 
