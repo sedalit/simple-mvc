@@ -17,9 +17,13 @@ class MailService implements ServiceProviderInterface {
         $c->setFactory('mail', new Factory(self::class));
     }
 
-    public function __construct()
+    public function __construct(string $configPath = CONFIG . '/mail.php')
     {
-        require_once CONFIG . '/mail.php';
+        if (file_exists($configPath)) {
+            require_once CONFIG . '/mail.php';
+        } else {
+            throw new \Exception('Mail configuration file not found at ' . $configPath);
+        }
 
         $this->phpMailer = new PHPMailer(true);
         $this->phpMailer->isSMTP(); 

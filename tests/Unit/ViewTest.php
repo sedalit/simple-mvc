@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use PHPFramework\View;
+use PHPFramework\Utils\File;
 
 class ViewTest extends TestCase {
     protected const TEST_VIEW_FILE = VIEWS . '/test.php';
@@ -13,6 +14,17 @@ class ViewTest extends TestCase {
     {
         parent::setUp();
         $this->view = new View();
+    }
+
+    protected function tearDown() : void
+    {
+        parent::tearDown();
+        if (file_exists(self::TEST_VIEW_FILE)) {
+            unlink(self::TEST_VIEW_FILE);
+        }
+        if (is_dir(dirname(self::TEST_VIEW_FILE))) {
+            rmdir(dirname(self::TEST_VIEW_FILE));
+        }
     }
 
     public function testRenderWithData(): void
@@ -48,6 +60,7 @@ class ViewTest extends TestCase {
 
     private function createViewFile(string $viewContent) : string
     {
+        File::makeDirIfNotExists(dirname(self::TEST_VIEW_FILE));
         file_put_contents(self::TEST_VIEW_FILE, $viewContent);
         return self::TEST_VIEW_FILE;
     }

@@ -97,4 +97,13 @@ class ApplicationTest extends TestCase
         $this->assertInstanceOf(\PHPFramework\Request::class, $this->app->get('request'));
         $this->assertInstanceOf(\PHPFramework\Response::class, $this->app->get('response'));
     }
+
+    public function testCanGetContainerService(): void
+    {
+        $container = $this->app->get('container');
+        $this->assertInstanceOf(\PHPFramework\Container::class, $container);
+
+        $container = Application::container();
+        $this->assertInstanceOf(\PHPFramework\Container::class, $container);
+    }
 }

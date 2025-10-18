@@ -17,7 +17,10 @@ class Application {
         self::$instance = $this;
 
         Env::load();
-        require_once __DIR__ . '/../../../../config/db.php';
+        $dbConfigPath = __DIR__ . '/../../../../config/db.php';
+        if (file_exists($dbConfigPath)) {
+            require_once $dbConfigPath;
+        }
 
         $this->uri = $uri;
        
