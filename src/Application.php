@@ -72,6 +72,11 @@ class Application {
         return self::$instance->serviceContainer->get(Cache::class);
     }
 
+    public static function container() : Container
+    {
+        return self::$instance->serviceContainer->get(Container::class);
+    }
+
     public function run() : void
     {
         echo $this->router()->dispatch();
