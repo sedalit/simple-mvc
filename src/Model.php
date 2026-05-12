@@ -17,6 +17,13 @@ abstract class Model implements \ArrayAccess {
         $this->loadData();
     }
 
+    public static function query() : QueryBuilder
+    {
+        $instance = new static();
+        $builder = new QueryBuilder(db());
+        return $builder->table($instance->tableName());
+    }
+
     public function loadData() : void
     {
         $data = Request::data();
