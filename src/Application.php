@@ -11,18 +11,20 @@ class Application {
 
     protected string $uri;
     protected ServiceContainer $serviceContainer;
+    protected string $dbConfigPath;
 
-    public function __construct(string $uri, array $providers)
+    public function __construct(string $uri, array $providers, string $dbConfigPath = __DIR__ . '/../../../../config/db.php')
     {
         self::$instance = $this;
-
+        
         Env::load();
-        $dbConfigPath = __DIR__ . '/../../../../config/db.php';
+
         if (file_exists($dbConfigPath)) {
             require_once $dbConfigPath;
         }
 
         $this->uri = $uri;
+        $this->dbConfigPath = $dbConfigPath;
        
         $this->serviceContainer = new ServiceContainer();
         
